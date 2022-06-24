@@ -21,6 +21,7 @@
 #     https://www.nipreps.org/community/licensing/
 #
 """Unit tests exercising models."""
+import os.path as op
 import numpy as np
 import pytest
 
@@ -55,8 +56,8 @@ def test_average_model():
             [0.307, -0.766, 0.677, 1000],
             [0.736, 0.013, 0.774, 2000],
         ]
-    )
-    data = np.random.randn(10, 10, 10, gtab.shape[0])
+    ).T
+    data = np.random.randn(10, 10, 10, gtab.shape[1])
     data_w25 = data[..., 1:]
     data_1000 = data[..., 2:4]
     data_2000 = data[..., 2:]
@@ -90,7 +91,7 @@ def test_two_initialisations(pkg_datadir):
     """Check that the two different initialisations result in the same models"""
 
     # Load test data
-    dmri_dataset = DWI.from_filename((pkg_datadir, "/data/dwi.h5"))
+    dmri_dataset = DWI.from_filename(op.join(pkg_datadir, "dwi.h5"))
 
     # Split data into test and train set
     data_train, data_test = dmri_dataset.logo_split(10)

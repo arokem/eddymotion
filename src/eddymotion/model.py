@@ -266,15 +266,15 @@ class AverageDWModel:
         """
         self._gtab = gtab
         self._th_low = kwargs.get("th_low", 50)
-        self._th_high = kwargs.get("th_high", self._gtab[..., 3].max())
+        self._th_high = kwargs.get("th_high", self._gtab[3].max())
         self._bias = kwargs.get("bias", True)
         self._stat = kwargs.get("stat", "median")
 
     def fit(self, data, **kwargs):
         """Calculate the average."""
         # Select the interval of b-values for which DWIs will be averaged
-        b_mask = (self._gtab[..., 3] >= self._th_low) & (
-            self._gtab[..., 3] <= self._th_high
+        b_mask = (self._gtab[3] >= self._th_low) & (
+            self._gtab[3] <= self._th_high
         )
 
         shells = data[..., b_mask]
