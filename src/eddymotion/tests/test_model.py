@@ -56,34 +56,34 @@ def test_average_model():
             [0.736, 0.013, 0.774, 2000],
         ]
     )
+    data = np.random.randn(10, 10, 10, gtab.shape[0])
+    data_w25 = data[..., 1:]
+    data_1000 = data[..., 2:4]
+    data_2000 = data[..., 2:]
 
-    gtab_w25 = gtab[1:, :]
-    gtab_1000 = gtab[2:3, :]
-    gtab_2000 = gtab[2:, :]
-
-    tmodel_mean = model.AverageDWModels(gtab=gtab, bias=False, stat="mean")
-    tmodel_median = model.AverageDWModels(gtab=gtab, bias=False, stat="median")
-    tmodel_1000 = model.AverageDWModels(
+    tmodel_mean = model.AverageDWModel(gtab=gtab, bias=False, stat="mean")
+    tmodel_median = model.AverageDWModel(gtab=gtab, bias=False, stat="median")
+    tmodel_1000 = model.AverageDWModel(
         gtab=gtab, bias=False, th_high=1000, th_low=1000
     )
-    tmodel_2000 = model.AverageDWModels(
+    tmodel_2000 = model.AverageDWModel(
         gtab=gtab, bias=False, th_high=2000, th_low=1000
     )
 
     # Verify that fit function returns nothing
-    assert tmodel_mean.fit() is None
+    assert tmodel_mean.fit(data) is None
 
-    tmodel_median.fit()
-    tmodel_1000.fit()
-    tmodel_2000.fit()
+    tmodel_median.fit(data)
+    tmodel_1000.fit(data)
+    tmodel_2000.fit(data)
 
     # Verify that the right statistics is applied and that the model discard b-values < 50
-    assert np.all(tmodel_mean.predict() == np.mean(gtab_w25[:, :2], axis=0))
-    assert np.all(tmodel_median.predict() == np.median(gtab_w25[:, :2], axis=0))
+    assert np.all(tmodel_mean.predict() == np.mean(data_w25, axis=-1))
+    assert np.all(tmodel_median.predict() == np.median(data_w25, axis=-1))
 
     # Verify that the threshold for b-value selection works as expected
-    assert np.all(tmodel_1000.predict() == np.median(gtab_1000[:, :2], axis=0))
-    assert np.all(tmodel_2000.predict() == np.median(gtab_2000[:, :2], axis=0))
+    assert np.all(tmodel_1000.predict() == np.median(data_1000, axis=-1))
+    assert np.all(tmodel_2000.predict() == np.median(data_2000, axis=-1))
 
 
 def test_two_initialisations(pkg_datadir):
